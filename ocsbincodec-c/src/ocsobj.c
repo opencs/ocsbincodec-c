@@ -31,12 +31,16 @@
  #include <ocsobj.h>
 
 //------------------------------------------------------------------------------
+void OCSObject_dispose(OCSObject * myself) {
+}
+
+//------------------------------------------------------------------------------
 int OCSObject_New(OCSObject ** myself, size_t size,
 		OCSObject_dispose_t dispose) {
 
 	// Check arguments
 	if (dispose == NULL) {
-		return OCSERR_INVALID_ARGUMENT;
+		dispose = OCSObject_dispose;
 	}
 	if (myself == NULL) {
 		return OCSERR_INVALID_ARGUMENT;
@@ -47,7 +51,7 @@ int OCSObject_New(OCSObject ** myself, size_t size,
 
 	if ((*myself) != NULL) {
 		// Already allocated, just check the size.
-		if ((*myself)->size < size) {
+		if ((*myself)->_size < size) {
 			return OCSERR_BUFFER_TOO_SMALL;
 		} else {
 			return OCSERR_SUCCESS;
@@ -55,14 +59,10 @@ int OCSObject_New(OCSObject ** myself, size_t size,
 	} else {
 		// Not allocated. Create a new one
 		(*myself) = calloc(size, 1);
-		(*myself)->size = size;
+		(*myself)->_size = size;
 		(*myself)->dispose = dispose;
 		return OCSERR_SUCCESS;
 	}
-}
-
-//------------------------------------------------------------------------------
-void OCSObject_Dispose(OCSObject * myself) {
 }
 
 //------------------------------------------------------------------------------

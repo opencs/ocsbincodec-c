@@ -49,13 +49,28 @@ void OCSObjectTest::TearDown() {
 }
 
 //------------------------------------------------------------------------------
+void OCSObjectTest_dispose(OCSObject * myself) {
+}
+
+//------------------------------------------------------------------------------
+void OCSObjectTest_dispose2(OCSObject * myself) {
+}
+
+//------------------------------------------------------------------------------
 TEST_F(OCSObjectTest, Constructor) {
 	OCSObject * obj;
 	int retval;
 
 	obj = NULL;
-	retval = OCSObject_New(&obj, sizeof(OCSObject), OCSObject_Dispose);
+	retval = OCSObject_New(&obj, sizeof(OCSObject), NULL);
 	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	ASSERT_TRUE(obj->dispose != NULL);
+	OCSObjectDelete(obj);
+
+	obj = NULL;
+	retval = OCSObject_New(&obj, sizeof(OCSObject), OCSObjectTest_dispose);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	ASSERT_TRUE(obj->dispose == OCSObjectTest_dispose);
 	OCSObjectDelete(obj);
 }
 
@@ -64,14 +79,19 @@ TEST_F(OCSObjectTest, ConstructorAlreadyInitialized) {
 	OCSObject * obj;
 	int retval;
 
+	// Call from superclass
 	obj = NULL;
-	retval = OCSObject_New(&obj, sizeof(OCSObject) + 1, OCSObject_Dispose);
+	retval = OCSObject_New(&obj, sizeof(OCSObject) + 1, OCSObjectTest_dispose);
 	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	ASSERT_TRUE(obj->dispose == OCSObjectTest_dispose);
 
-	retval = OCSObject_New(&obj, sizeof(OCSObject), OCSObject_Dispose);
+	// Call from base
+	retval = OCSObject_New(&obj, sizeof(OCSObject), OCSObjectTest_dispose2);
 	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	ASSERT_TRUE(obj->dispose == OCSObjectTest_dispose);
 
-	retval = OCSObject_New(&obj, sizeof(OCSObject) + 2, OCSObject_Dispose);
+	// Wrong call
+	retval = OCSObject_New(&obj, sizeof(OCSObject) + 2, NULL);
 	ASSERT_EQ(OCSERR_BUFFER_TOO_SMALL, retval);
 
 	OCSObjectDelete(obj);
@@ -87,12 +107,7 @@ TEST_F(OCSObjectTest, ConstructorFail) {
 	ASSERT_EQ(OCSERR_INVALID_ARGUMENT, retval);
 
 	obj = NULL;
-	retval = OCSObject_New(&obj, sizeof(OCSObject) - 1, OCSObject_Dispose);
-	ASSERT_EQ(OCSERR_INVALID_ARGUMENT, retval);
-	ASSERT_TRUE(obj == NULL);
-
-	obj = NULL;
-	retval = OCSObject_New(&obj, sizeof(OCSObject), NULL);
+	retval = OCSObject_New(&obj, sizeof(OCSObject) - 1, NULL);
 	ASSERT_EQ(OCSERR_INVALID_ARGUMENT, retval);
 	ASSERT_TRUE(obj == NULL);
 }

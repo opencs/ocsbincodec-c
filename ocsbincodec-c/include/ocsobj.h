@@ -54,7 +54,8 @@ struct OCSObject {
 	/**
 	 * Size of this structure in bytes.
 	 */
-	size_t size;
+	size_t _size;
+
 	/**
 	 * Pointer to the dispose method.
 	 */
@@ -66,18 +67,12 @@ struct OCSObject {
  *
  * @param[in,out] myself A pointer to the pointer of myself.
  * @param[in] size The size of this structure.
- * @param[in] The dispose function.
+ * @param[in] The dispose function. If NULL, assumes the default implementation
+ * that does nothing.
  * @return OCSERR_SUCCESS for success or other error code in case of failure.
  */
 int OCSObject_New(OCSObject ** myself, size_t size,
 		OCSObject_dispose_t dispose);
-
-/**
- * Default implementation of dispose. This method does nothing.
- *
- * @param[in] myself A pointer to myself.
- */
-void OCSObject_Dispose(OCSObject * myself);
 
 /**
  * Disposes instances of OCSObject.
