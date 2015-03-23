@@ -67,7 +67,6 @@ TEST_F(OCSRandomSourceTest, Constructor) {
 	OCSRandomSource * r;
 	int retval;
 
-	r = NULL;
 	retval = OCSRandomSource_New(&r, 0);
 	ASSERT_EQ(OCSERR_SUCCESS, retval);
 	ASSERT_TRUE(r->next != NULL);
@@ -88,7 +87,6 @@ TEST_F(OCSRandomSourceTest, next) {
 		ASSERT_TRUE(inp->isOpen());
 
 		ASSERT_TRUE(inp->nextInt(v));
-		r = NULL;
 		retval = OCSRandomSource_New(&r, v);
 		ASSERT_EQ(OCSERR_SUCCESS, retval);
 
@@ -113,10 +111,10 @@ TEST_F(OCSRandomSourceTest, sync) {
 	int retval;
 
 	for (i = 0; i < 1000; i++) {
-		r1 = NULL;
 		retval = OCSRandomSource_New(&r1, i);
-		r2 = NULL;
+		ASSERT_EQ(OCSERR_SUCCESS, retval);
 		retval = OCSRandomSource_New(&r2, i);
+		ASSERT_EQ(OCSERR_SUCCESS, retval);
 
 		for (j = 0; j < 1000; j++) {
 			ASSERT_EQ(r1->next(r1), r2->next(r2));
