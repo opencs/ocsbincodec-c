@@ -49,20 +49,11 @@ int OCSObject_New(OCSObject ** myself, size_t size,
 		return OCSERR_INVALID_ARGUMENT;
 	}
 
-	if ((*myself) != NULL) {
-		// Already allocated, just check the size.
-		if ((*myself)->_size < size) {
-			return OCSERR_BUFFER_TOO_SMALL;
-		} else {
-			return OCSERR_SUCCESS;
-		}
-	} else {
-		// Not allocated. Create a new one
-		(*myself) = calloc(size, 1);
-		(*myself)->_size = size;
-		(*myself)->dispose = dispose;
-		return OCSERR_SUCCESS;
-	}
+	// Not allocated. Create a new one
+	(*myself) = calloc(size, 1);
+	(*myself)->_size = size;
+	(*myself)->dispose = dispose;
+	return OCSERR_SUCCESS;
 }
 
 //------------------------------------------------------------------------------

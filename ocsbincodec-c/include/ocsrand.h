@@ -62,7 +62,7 @@ struct OCSRandomSource {
 /**
  * Creates a new instance of OCSRandomSource.
  *
- * @param[in,out] myself A pointer to the pointer of myself.
+ * @param[out] myself A pointer to the pointer of myself.
  * @param[in] seed The 31-bit seed.
  * @ingroup OCSRandomSource
  */

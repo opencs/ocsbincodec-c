@@ -61,42 +61,16 @@ TEST_F(OCSObjectTest, Constructor) {
 	OCSObject * obj;
 	int retval;
 
-	obj = NULL;
 	retval = OCSObject_New(&obj, sizeof(OCSObject), NULL);
 	ASSERT_EQ(OCSERR_SUCCESS, retval);
 	ASSERT_TRUE(obj->dispose != NULL);
 	OCSObjectDelete(obj);
 
-	obj = NULL;
 	retval = OCSObject_New(&obj, sizeof(OCSObject), OCSObjectTest_dispose);
 	ASSERT_EQ(OCSERR_SUCCESS, retval);
 	ASSERT_TRUE(obj->dispose == OCSObjectTest_dispose);
 	OCSObjectDelete(obj);
 }
-
-//------------------------------------------------------------------------------
-TEST_F(OCSObjectTest, ConstructorAlreadyInitialized) {
-	OCSObject * obj;
-	int retval;
-
-	// Call from superclass
-	obj = NULL;
-	retval = OCSObject_New(&obj, sizeof(OCSObject) + 1, OCSObjectTest_dispose);
-	ASSERT_EQ(OCSERR_SUCCESS, retval);
-	ASSERT_TRUE(obj->dispose == OCSObjectTest_dispose);
-
-	// Call from base
-	retval = OCSObject_New(&obj, sizeof(OCSObject), OCSObjectTest_dispose2);
-	ASSERT_EQ(OCSERR_SUCCESS, retval);
-	ASSERT_TRUE(obj->dispose == OCSObjectTest_dispose);
-
-	// Wrong call
-	retval = OCSObject_New(&obj, sizeof(OCSObject) + 2, NULL);
-	ASSERT_EQ(OCSERR_BUFFER_TOO_SMALL, retval);
-
-	OCSObjectDelete(obj);
-}
-
 
 //------------------------------------------------------------------------------
 TEST_F(OCSObjectTest, ConstructorFail) {

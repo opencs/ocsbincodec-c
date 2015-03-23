@@ -67,7 +67,7 @@ struct OCSObject {
 /**
  * Allocates and initializes a instance of OCSObject.
  *
- * @param[in,out] myself A pointer to the pointer of myself.
+ * @param[out] myself A pointer to the pointer of myself.
  * @param[in] size The size of this structure.
  * @param[in] The dispose function. If NULL, assumes the default implementation
  * that does nothing.
