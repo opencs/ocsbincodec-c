@@ -44,11 +44,13 @@ typedef struct OCSObject OCSObject;
  * This is the type used by all dispose methods.
  *
  * @param[in] myself Myself.
+ * @ingroup OCSObject
  */
 typedef void (*OCSObject_dispose_t)(OCSObject * myself);
 
 /**
  * This is the data structure that represents the class OCSObject.
+ * @ingroup OCSObject
  */
 struct OCSObject {
 	/**
@@ -70,6 +72,7 @@ struct OCSObject {
  * @param[in] The dispose function. If NULL, assumes the default implementation
  * that does nothing.
  * @return OCSERR_SUCCESS for success or other error code in case of failure.
+ * @ingroup OCSObject
  */
 int OCSObject_New(OCSObject ** myself, size_t size,
 		OCSObject_dispose_t dispose);
@@ -78,6 +81,7 @@ int OCSObject_New(OCSObject ** myself, size_t size,
  * Disposes instances of OCSObject.
  *
  * @param[in] obj The object to be disposed.
+ * @ingroup OCSObject
  */
 void OCSObjectDelete(OCSObject * obj);
 

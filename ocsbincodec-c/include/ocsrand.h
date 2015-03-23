@@ -40,6 +40,11 @@ extern "C" {
 
 typedef struct OCSRandomSource OCSRandomSource;
 
+/**
+ * Data structure for the class OCSRandomSource.
+ *
+ * @ingroup OCSRandomSource
+ */
 struct OCSRandomSource {
 	OCSObject base;
 
@@ -54,8 +59,22 @@ struct OCSRandomSource {
 	int (*next)(OCSRandomSource * myself);
 };
 
+/**
+ * Creates a new instance of OCSRandomSource.
+ *
+ * @param[in,out] myself A pointer to the pointer of myself.
+ * @param[in] seed The 31-bit seed.
+ * @ingroup OCSRandomSource
+ */
 int OCSRandomSource_New(OCSRandomSource ** myself, uint32_t seed);
 
+/**
+ * The initialization method for the class OCSRandomSource.
+ *
+ * @param[in,out] myself A pointer to myself.
+ * @param[in] seed The 31-bit seed.
+ * @ingroup OCSRandomSource
+ */
 int OCSRandomSource_init(OCSRandomSource * myself, uint32_t seed);
 
 #ifdef __cplusplus

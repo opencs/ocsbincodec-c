@@ -31,12 +31,32 @@
 #ifndef OCSERR_H_
 #define OCSERR_H_
 
+/**
+ * Error code for success.
+ *
+ * @ingroup OCSERR
+ */
 #define OCSERR_SUCCESS 0
 
+/**
+ * Error code for out of memory.
+ *
+ * @ingroup OCSERR
+ */
 #define OCSERR_OUT_OF_MEMORY -1
 
+/**
+ * Error code for buffer to small.
+ *
+ * @ingroup OCSERR
+ */
 #define OCSERR_BUFFER_TOO_SMALL -2
 
+/**
+ * Error code for invalid argument.
+ *
+ * @ingroup OCSERR
+ */
 #define OCSERR_INVALID_ARGUMENT -3
 
 
