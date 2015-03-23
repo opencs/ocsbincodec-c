@@ -54,7 +54,7 @@ TEST_F(OCSObjectTest, Constructor) {
 	int retval;
 
 	obj = NULL;
-	retval = OCSObjectNew(&obj, sizeof(OCSObject), OCSObject_Dispose);
+	retval = OCSObject_New(&obj, sizeof(OCSObject), OCSObject_Dispose);
 	ASSERT_EQ(OCSERR_SUCCESS, retval);
 	OCSObjectDelete(obj);
 }
@@ -65,13 +65,13 @@ TEST_F(OCSObjectTest, ConstructorAlreadyInitialized) {
 	int retval;
 
 	obj = NULL;
-	retval = OCSObjectNew(&obj, sizeof(OCSObject) + 1, OCSObject_Dispose);
+	retval = OCSObject_New(&obj, sizeof(OCSObject) + 1, OCSObject_Dispose);
 	ASSERT_EQ(OCSERR_SUCCESS, retval);
 
-	retval = OCSObjectNew(&obj, sizeof(OCSObject), OCSObject_Dispose);
+	retval = OCSObject_New(&obj, sizeof(OCSObject), OCSObject_Dispose);
 	ASSERT_EQ(OCSERR_SUCCESS, retval);
 
-	retval = OCSObjectNew(&obj, sizeof(OCSObject) + 2, OCSObject_Dispose);
+	retval = OCSObject_New(&obj, sizeof(OCSObject) + 2, OCSObject_Dispose);
 	ASSERT_EQ(OCSERR_BUFFER_TOO_SMALL, retval);
 
 	OCSObjectDelete(obj);
@@ -83,16 +83,16 @@ TEST_F(OCSObjectTest, ConstructorFail) {
 	OCSObject * obj;
 	int retval;
 
-	retval = OCSObjectNew(NULL, sizeof(OCSObject), NULL);
+	retval = OCSObject_New(NULL, sizeof(OCSObject), NULL);
 	ASSERT_EQ(OCSERR_INVALID_ARGUMENT, retval);
 
 	obj = NULL;
-	retval = OCSObjectNew(&obj, sizeof(OCSObject) - 1, OCSObject_Dispose);
+	retval = OCSObject_New(&obj, sizeof(OCSObject) - 1, OCSObject_Dispose);
 	ASSERT_EQ(OCSERR_INVALID_ARGUMENT, retval);
 	ASSERT_TRUE(obj == NULL);
 
 	obj = NULL;
-	retval = OCSObjectNew(&obj, sizeof(OCSObject), NULL);
+	retval = OCSObject_New(&obj, sizeof(OCSObject), NULL);
 	ASSERT_EQ(OCSERR_INVALID_ARGUMENT, retval);
 	ASSERT_TRUE(obj == NULL);
 }

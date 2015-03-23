@@ -31,7 +31,7 @@
  #include <ocsobj.h>
 
 //------------------------------------------------------------------------------
-int OCSObjectNew(OCSObject ** myself, size_t size,
+int OCSObject_New(OCSObject ** myself, size_t size,
 		OCSObject_dispose_t dispose) {
 
 	// Check arguments

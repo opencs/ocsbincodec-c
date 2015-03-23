@@ -69,7 +69,7 @@ struct OCSObject {
  * @param[in] The dispose function.
  * @return OCSERR_SUCCESS for success or other error code in case of failure.
  */
-int OCSObjectNew(OCSObject ** myself, size_t size,
+int OCSObject_New(OCSObject ** myself, size_t size,
 		OCSObject_dispose_t dispose);
 
 /**
