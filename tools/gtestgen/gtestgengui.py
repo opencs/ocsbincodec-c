@@ -115,7 +115,7 @@ if __name__ == '__main__':
     root.wm_title('gtestgen')
     
     if len(sys.argv) > 1:
-        outdir = sys.argv[2]
+        outdir = sys.argv[1]
     else:
         outdir = None
     app = GTestGenGUI(outdir, master=root)
