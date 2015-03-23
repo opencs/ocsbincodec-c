@@ -28,66 +28,16 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef OCSOBJ_H_
-#define OCSOBJ_H_
+#ifndef OCSERR_H_
+#define OCSERR_H_
 
-#include <stdlib.h>
-#include <ocserr.h>
+#define OCSERR_SUCCESS 0
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#define OCSERR_OUT_OF_MEMORY -1
 
-typedef struct OCSObject OCSObject;
+#define OCSERR_BUFFER_TOO_SMALL -2
 
-/**
- * This is the type used by all dispose methods.
- *
- * @param[in] myself Myself.
- */
-typedef void (*OCSObject_dispose_t)(OCSObject * myself);
+#define OCSERR_INVALID_ARGUMENT -3
 
-/**
- * This is the data structure that represents the class OCSObject.
- */
-struct OCSObject {
-	/**
-	 * Size of this structure in bytes.
-	 */
-	size_t size;
-	/**
-	 * Pointer to the dispose method.
-	 */
-	OCSObject_dispose_t dispose;
-};
 
-/**
- * Allocates and initializes a instance of OCSObject.
- *
- * @param[in,out] myself A pointer to the pointer of myself.
- * @param[in] size The size of this structure.
- * @param[in] The dispose function.
- * @return OCSERR_SUCCESS for success or other error code in case of failure.
- */
-int OCSObjectNew(OCSObject ** myself, size_t size,
-		OCSObject_dispose_t dispose);
-
-/**
- * Default implementation of dispose. This method does nothing.
- *
- * @param[in] myself A pointer to myself.
- */
-void OCSObject_Dispose(OCSObject * myself);
-
-/**
- * Disposes instances of OCSObject.
- *
- * @param[in] obj The object to be disposed.
- */
-void OCSObjectDelete(OCSObject * obj);
-
-#ifdef __cplusplus
-} //extern "C"
-#endif
-
-#endif /* OCSOBJ_H_ */
+#endif /* OCSERR_H_ */
