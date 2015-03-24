@@ -46,6 +46,11 @@
 #define OCSRandomSource_C 12345
 
 //------------------------------------------------------------------------------
+void OCSRandomSource_dispose(OCSObject * myself) {
+	OCSObject_dispose(myself);
+}
+
+//------------------------------------------------------------------------------
 int OCSRandomSource_next(OCSRandomSource * myself) {
 	uint64_t tmp;
 
@@ -60,7 +65,7 @@ int OCSRandomSource_New(OCSRandomSource ** myself, uint32_t seed) {
 	int retval;
 
 	retval = OCSObject_New((OCSObject **)myself, sizeof(OCSRandomSource),
-			NULL);
+			OCSRandomSource_dispose);
 	if (retval != OCSERR_SUCCESS) {
 		return retval;
 	}
