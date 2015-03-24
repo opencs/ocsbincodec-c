@@ -37,17 +37,96 @@
 extern "C" {
 #endif
 
+/**
+ * @defgroup ClassOCSArrayAlphabet Class OCSArrayAlphabet
+ * <p><b>@ref ClassOCSObject
+ * &gt; @ref ClassOCSAlphabet
+ * &gt; @ref ClassOCSArrayAlphabet</b></p>
+ *
+ * This class implements an alphabet that uses a char array as the character
+ * mapping.
+ */
+/**
+ * @addtogroup ClassOCSArrayAlphabet
+ * @{
+ */
+
+/**
+ * Maximum size of the alphabet.
+ */
+#define OCSArrayAlphabet_MAX_SIZE 256
+
+/**
+ * Type of the class OCSArrayAlphabet.
+ */
 typedef struct OCSArrayAlphabet OCSArrayAlphabet;
 
+/**
+ * Structure of the class OCSArrayAlphabet.
+ */
 struct OCSArrayAlphabet {
+	/**
+	 * The base class.
+	 */
 	OCSAlphabet base;
-
+	/**
+	 * The alphabet.
+	 */
 	char * alphabet;
 };
 
-int OCSArrayAlphabet_New(OCSArrayAlphabet ** myself, const char * chars, int charsSize);
+/**
+ * Creates a new instance of OCSArrayAlphabet.
+ *
+ * @param[out] myself The pointer to the pointer to myself.
+ * @param[in] chars The characters of the alphabet.
+ * @param[in] charsSize The size of chars in characters.
+ * @return OCSERR_SUCCESS for success or other error code in case of failure.
+ */
+int OCSArrayAlphabet_New(OCSArrayAlphabet ** myself, const char * chars,
+		int charsSize);
 
-int OCSArrayAlphabet_init(OCSArrayAlphabet * myself, const char * chars, int charsSize);
+/**
+ * Initializes a new instance of OCSArrayAlphabet.
+ *
+ * @param[out] myself The pointer to myself.
+ * @param[in] chars The characters of the alphabet.
+ * @param[in] charsSize The size of chars in characters.
+ * @return OCSERR_SUCCESS for success or other error code in case of failure.
+ * @note This method is called only by @ref OCSArrayAlphabet_New() and
+ * direct subclasses of it.
+ */
+int OCSArrayAlphabet_init(OCSArrayAlphabet * myself, const char * chars,
+		int charsSize);
+
+/**
+ * Returns the value of a given character.
+ *
+ * @param[in] myself A pointer to myself.
+ * @param[in] v The value. It must be a value between 0 and getSize() - 1.
+ * @return The character.
+ */
+int OCSArrayAlphabet_getCharacter(const OCSAlphabet * myself, int v);
+
+/**
+ * Returns the value of a given character.
+ *
+ * @param[in] myself A pointer to myself.
+ * @param[in] c The character to be tested.
+ * @return The value of the character or -1 if the character is not in the
+ * alphabet.
+ */
+int OCSArrayAlphabet_getValue(const OCSAlphabet * myself, int c);
+
+/**
+ * Disposes this instance and releases all allocated resources. This method is
+ * called only by OCSObjectDelete() or subclasses of this class.
+ *
+ * @param[out] myself A pointer to myself.
+ */
+void OCSArrayAlphabet_dispose(OCSObject * myself);
+
+/** @} */
 
 #ifdef __cplusplus
 } // extern "C"
