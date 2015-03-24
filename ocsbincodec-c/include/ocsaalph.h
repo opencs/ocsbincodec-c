@@ -33,14 +33,25 @@
 
 #include <ocsalpha.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct OCSArrayAlphabet OCSArrayAlphabet;
 
 struct OCSArrayAlphabet {
 	OCSAlphabet base;
 
-	int size;
-
 	char * alphabet;
 };
+
+int OCSArrayAlphabet_New(OCSArrayAlphabet ** myself, const char * chars, int charsSize);
+
+int OCSArrayAlphabet_init(OCSArrayAlphabet * myself, const char * chars, int charsSize);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 
 #endif /* OCSAALPH_H_ */

@@ -39,17 +39,25 @@ extern "C" {
 #endif
 
 /**
- * @addtogroup OCSRandomSource
- * @{
- */
-
-/**
+ * @defgroup ClassOCSRandomSource Class OCSRandomSource
+ *
+ * <p><b>@ref ClassOCSObject
+ * &gt; @ref ClassOCSRandomSource</b></p>
+ *
  * This class implements a simple random source.
  *
  * <p>Internally, this implementation uses a linear congruential generator with
  * the same parameters used by the glibc.</p>
  *
  * <p>This implementation is not thread safe.</p>
+ */
+
+/**
+ * @addtogroup ClassOCSRandomSource
+ * @{
+ */
+
+/**
  */
 typedef struct OCSRandomSource OCSRandomSource;
 
@@ -96,8 +104,6 @@ int OCSRandomSource_init(OCSRandomSource * myself, uint32_t seed);
 /**
  * Disposes this instance and releases all allocated resources. This method is
  * called only by OCSObjectDelete() or subclasses of this class.
- *
- * <p>This implementation does nothing.</p>
  *
  * @param[out] myself A pointer to myself.
  */

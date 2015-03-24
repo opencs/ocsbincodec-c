@@ -38,6 +38,17 @@ extern "C" {
 #endif
 
 /**
+ * @defgroug  ClassRandomAlphabetGenerator ClassRandomAlphabetGenerator
+ *
+ * This class implements a random alphabet generator. It can be used to
+ * generate random alphabets that can be used to obfuscate data.
+ */
+/**
+ * @addtogroup ClassRandomAlphabetGenerator
+ * @{
+ */
+
+/**
  * Generates a random alphabet.
  *
  * <p>This algorithm is designed to guarantee that a given input will
@@ -71,6 +82,8 @@ int RandomAlphabetGenerator_generateRandom(uint32_t seed, int rounds,
  */
 int RandomAlphabetGenerator_shuffle(uint32_t seed, int rounds,
 		char * alphabet, int alphabetSize);
+
+/** @} */
 
 #ifdef __cplusplus
 } //extern "C"

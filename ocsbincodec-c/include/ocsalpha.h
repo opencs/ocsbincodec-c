@@ -38,6 +38,23 @@
 extern "C" {
 #endif
 
+/**
+ * @defgroup ClassOCSAlphabet Class OCSAlphabet
+ *
+ * <p><b>@ref ClassOCSObject
+ * &gt; @ref ClassOCSAlphabet</b></p>
+ *
+ * This abstract class is the base class for all alphabets.
+ *
+ * <p>Internally, this implementation uses a linear congruential generator with
+ * the same parameters used by the glibc.</p>
+ *
+ * <p>This implementation is not thread safe.</p>
+ */
+/**
+ * @addtogroup ClassOCSAlphabet
+ * @{
+ */
 typedef struct OCSAlphabet OCSAlphabet;
 
 /**
@@ -89,6 +106,16 @@ struct OCSAlphabet {
  * @param[in] size The size of the alphabet.
  */
 int OCSAlphabet_init(OCSAlphabet * myself, int size);
+
+/**
+ * Disposes this instance and releases all allocated resources. This method is
+ * called only by OCSObjectDelete() or subclasses of this class.
+ *
+ * @param[out] myself A pointer to myself.
+ */
+void OCSAlphabet_dispose(OCSObject * myself);
+
+/** @} */
 
 #ifdef __cplusplus
 } //extern "C"

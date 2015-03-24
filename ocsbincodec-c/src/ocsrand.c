@@ -66,11 +66,14 @@ int OCSRandomSource_New(OCSRandomSource ** myself, uint32_t seed) {
 
 	retval = OCSObject_New((OCSObject **)myself, sizeof(OCSRandomSource),
 			OCSRandomSource_dispose);
-	if (retval != OCSERR_SUCCESS) {
-		return retval;
+	if (retval == OCSERR_SUCCESS) {
+		retval = OCSRandomSource_init(*myself, seed);
+		if (retval != OCSERR_SUCCESS) {
+			OCSObjectDelete((OCSObject*)*myself);
+			*myself = NULL;
+		}
 	}
-
-	return OCSRandomSource_init(*myself, seed);
+	return retval;
 }
 
 //------------------------------------------------------------------------------

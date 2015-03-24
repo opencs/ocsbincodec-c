@@ -8,6 +8,11 @@
 #include <ocsbalph.h>
 
 //------------------------------------------------------------------------------
+void OCSBinaryAlphabet_dispose(OCSObject * myself) {
+	OCSAlphabet_dispose(myself);
+}
+
+//------------------------------------------------------------------------------
 int OCSBinaryAlphabet_getCharacter(const OCSAlphabet * myself, int v) {
 	OCSBinaryAlphabet * me;
 
@@ -39,27 +44,27 @@ int OCSBinaryAlphabet_New(OCSBinaryAlphabet ** myself, int zero, int one) {
 
 	// Call the constructor of the object
 	retval = OCSObject_New((OCSObject **)myself, sizeof(OCSBinaryAlphabet),
-			NULL);
-	if (retval != OCSERR_SUCCESS) {
-		return retval;
+			OCSBinaryAlphabet_dispose);
+	if (retval == OCSERR_SUCCESS) {
+		// Call my initializer
+		retval = OCSBinaryAlphabet_init(*myself, zero, one);
 	}
-
-	// Call the base initializer
-	retval = OCSAlphabet_init((OCSAlphabet*)(*myself), 2);
-	if (retval != OCSERR_SUCCESS) {
-		return retval;
-	}
-
-	// Call my initializer
-	retval = OCSBinaryAlphabet_init(*myself, zero, one);
 	return retval;
 }
 
 //------------------------------------------------------------------------------
 int OCSBinaryAlphabet_init(OCSBinaryAlphabet * myself, int zero, int one) {
+	int retval;
 
+	// Check the parameters
 	if (one == zero) {
 		return OCSERR_INVALID_ARGUMENT;
+	}
+
+	// Call the base initializer
+	retval = OCSAlphabet_init((OCSAlphabet*)(myself), 2);
+	if (retval != OCSERR_SUCCESS) {
+		return retval;
 	}
 
 	myself->_zero = zero;

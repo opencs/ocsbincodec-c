@@ -39,12 +39,20 @@ extern "C" {
 #endif
 
 /**
- * @addtogroup OCSObject
+ * @defgroup ClassOCSObject Class OCSObject
+ *
+ * <p><b>@ref ClassOCSObject</b></p>
+ *
+ * This class is the base class for all classes in this library.
+ */
+
+/**
+ * @addtogroup ClassOCSObject
  * @{
  */
 
 /**
- * This class is the base class for all classes in this library.
+ * Type of the class OCSObject.
  */
 typedef struct OCSObject OCSObject;
 
@@ -57,7 +65,7 @@ typedef struct OCSObject OCSObject;
 typedef void (*OCSObject_dispose_t)(OCSObject * myself);
 
 /**
- * This is the data structure that represents the class OCSObject.
+ * Internal structure of class OCSObject.
  */
 struct OCSObject {
 	/**

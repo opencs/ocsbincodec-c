@@ -12,6 +12,11 @@ int OCSAlphabet_getSize(const OCSAlphabet * myself) {
 }
 
 //------------------------------------------------------------------------------
+void OCSAlphabet_dispose(OCSObject * myself) {
+	OCSObject_dispose(myself);
+}
+
+//------------------------------------------------------------------------------
 int OCSAlphabet_init(OCSAlphabet * myself, int size) {
 	myself->_size = size;
 	myself->getSize = OCSAlphabet_getSize;

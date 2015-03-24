@@ -49,18 +49,25 @@ int OCSObject_New(OCSObject ** myself, size_t size,
 		return OCSERR_INVALID_ARGUMENT;
 	}
 
-	// Not allocated. Create a new one
+	// Create the new object if possible
 	(*myself) = calloc(size, 1);
-	(*myself)->_size = size;
-	(*myself)->dispose = dispose;
-	return OCSERR_SUCCESS;
+	if (*myself) {
+		(*myself)->_size = size;
+		(*myself)->dispose = dispose;
+		return OCSERR_SUCCESS;
+	} else {
+		return OCSERR_OUT_OF_MEMORY;
+	}
 }
 
 //------------------------------------------------------------------------------
 void OCSObjectDelete(OCSObject * obj) {
 
 	if (obj) {
-		obj->dispose(obj);
+		if (obj->dispose) {
+			obj->dispose(obj);
+		}
 		free(obj);
 	}
 }
+//------------------------------------------------------------------------------
