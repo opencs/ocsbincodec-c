@@ -91,7 +91,7 @@ TEST_F(OCSRandomSourceTest, next) {
 		ASSERT_EQ(OCSERR_SUCCESS, retval);
 
 		for (j = 0; j < 1000; j++) {
-			std::cout << j << " " << v << "\n";
+			//std::cout << j << " " << v << "\n";
 			ASSERT_TRUE(inp->nextInt(v));
 			ASSERT_EQ(v, r->next(r));
 		}
