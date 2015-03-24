@@ -48,6 +48,10 @@ int OCSBinaryAlphabet_New(OCSBinaryAlphabet ** myself, int zero, int one) {
 	if (retval == OCSERR_SUCCESS) {
 		// Call my initializer
 		retval = OCSBinaryAlphabet_init(*myself, zero, one);
+		if (retval != OCSERR_SUCCESS) {
+			OCSObjectDelete((OCSObject *)*myself);
+			*myself = NULL;
+		}
 	}
 	return retval;
 }
