@@ -38,19 +38,26 @@
 extern "C" {
 #endif
 
+/**
+ * @addtogroup OCSObject
+ * @{
+ */
+
+/**
+ * This class is the base class for all classes in this library.
+ */
 typedef struct OCSObject OCSObject;
 
 /**
- * This is the type used by all dispose methods.
+ * This is the type used by all dispose methods. It must clear all allocated
+ * resources and call the dispose method of parent classes.
  *
  * @param[in] myself Myself.
- * @ingroup OCSObject
  */
 typedef void (*OCSObject_dispose_t)(OCSObject * myself);
 
 /**
  * This is the data structure that represents the class OCSObject.
- * @ingroup OCSObject
  */
 struct OCSObject {
 	/**
@@ -72,18 +79,29 @@ struct OCSObject {
  * @param[in] The dispose function. If NULL, assumes the default implementation
  * that does nothing.
  * @return OCSERR_SUCCESS for success or other error code in case of failure.
- * @ingroup OCSObject
+ * @note In case of failure, myself will point to nothing.
  */
 int OCSObject_New(OCSObject ** myself, size_t size,
 		OCSObject_dispose_t dispose);
 
 /**
+ * Disposes this instance and releases all allocated resources. This method is
+ * called only by OCSObjectDelete() or subclasses of this class.
+ *
+ * <p>This implementation does nothing.</p>
+ *
+ * @param[out] myself A pointer to myself.
+ */
+void OCSObject_dispose(OCSObject * myself);
+
+/**
  * Disposes instances of OCSObject.
  *
  * @param[in] obj The object to be disposed.
- * @ingroup OCSObject
  */
 void OCSObjectDelete(OCSObject * obj);
+
+/** @} */
 
 #ifdef __cplusplus
 } //extern "C"
