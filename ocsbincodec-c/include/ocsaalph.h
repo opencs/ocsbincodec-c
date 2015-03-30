@@ -81,10 +81,12 @@ struct OCSArrayAlphabet {
  * @param[out] myself The pointer to the pointer to myself.
  * @param[in] chars The characters of the alphabet.
  * @param[in] charsSize The size of chars in characters.
+ * @param[in] caseInsensitive Sets the behavior of getValue(). If zero,
+ * getValue() is case sensitive, otherwise, getValue() is case insensitive.
  * @return OCSERR_SUCCESS for success or other error code in case of failure.
  */
 int OCSArrayAlphabet_New(OCSArrayAlphabet ** myself, const char * chars,
-		int charsSize);
+		int charsSize, int caseInsensitive);
 
 /**
  * Initializes a new instance of OCSArrayAlphabet.
@@ -92,12 +94,14 @@ int OCSArrayAlphabet_New(OCSArrayAlphabet ** myself, const char * chars,
  * @param[out] myself The pointer to myself.
  * @param[in] chars The characters of the alphabet.
  * @param[in] charsSize The size of chars in characters.
+ * @param[in] caseInsensitive Sets the behavior of getValue(). If zero,
+ * getValue() is case sensitive, otherwise, getValue() is case insensitive.
  * @return OCSERR_SUCCESS for success or other error code in case of failure.
  * @note This method is called only by @ref OCSArrayAlphabet_New() and
  * direct subclasses of it.
  */
 int OCSArrayAlphabet_init(OCSArrayAlphabet * myself, const char * chars,
-		int charsSize);
+		int charsSize, int caseInsensitive);
 
 /**
  * Returns the value of a given character.
@@ -117,6 +121,17 @@ int OCSArrayAlphabet_getCharacter(const OCSAlphabet * myself, int v);
  * alphabet.
  */
 int OCSArrayAlphabet_getValue(const OCSAlphabet * myself, int c);
+
+/**
+ * Returns the value of a given character. This is the case insensitive version
+ * of OCSArrayAlphabet_getValue().
+ *
+ * @param[in] myself A pointer to myself.
+ * @param[in] c The character to be tested.
+ * @return The value of the character or -1 if the character is not in the
+ * alphabet.
+ */
+int OCSArrayAlphabet_getValueCI(const OCSAlphabet * myself, int c);
 
 /**
  * Disposes this instance and releases all allocated resources. This method is

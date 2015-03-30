@@ -29,11 +29,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 #include "ocsaalph.h"
-#include "string.h"
+#include <string.h>
+#include <ctype.h>
 
 //------------------------------------------------------------------------------
 int OCSArrayAlphabet_New(OCSArrayAlphabet ** myself, const char * chars,
-		int charsSize) {
+		int charsSize, int caseInsensitive) {
 	int retval;
 
 	// Call the constructor of the object
@@ -41,7 +42,7 @@ int OCSArrayAlphabet_New(OCSArrayAlphabet ** myself, const char * chars,
 			OCSArrayAlphabet_dispose);
 	if (retval == OCSERR_SUCCESS) {
 		// Call my initializer
-		retval = OCSArrayAlphabet_init(*myself, chars, charsSize);
+		retval = OCSArrayAlphabet_init(*myself, chars, charsSize, caseInsensitive);
 		if (retval != OCSERR_SUCCESS) {
 			OCSObjectDelete((OCSObject *)*myself);
 			*myself = NULL;
@@ -52,8 +53,9 @@ int OCSArrayAlphabet_New(OCSArrayAlphabet ** myself, const char * chars,
 
 //------------------------------------------------------------------------------
 int OCSArrayAlphabet_init(OCSArrayAlphabet * myself, const char * chars,
-		int charsSize) {
+		int charsSize, int caseInsensitive) {
 	int retval;
+	OCSAlphabet * asBase;
 
 	// Check the arguments first
 	if ((chars == NULL) || (charsSize < 1) ||
@@ -63,6 +65,16 @@ int OCSArrayAlphabet_init(OCSArrayAlphabet * myself, const char * chars,
 
 	retval = OCSAlphabet_init((OCSAlphabet*)myself, charsSize);
 	if (retval == OCSERR_SUCCESS) {
+		// Register the methods
+		asBase = (OCSAlphabet *)myself;
+		asBase->getCharacter = OCSArrayAlphabet_getCharacter;
+		if (caseInsensitive) {
+			asBase->getValue = OCSArrayAlphabet_getValueCI;
+		} else {
+			asBase->getValue = OCSArrayAlphabet_getValue;
+		}
+
+		// Initialize the
 		myself->alphabet = malloc(sizeof(char) * charsSize);
 		if (myself->alphabet) {
 			memcpy(myself->alphabet, chars, sizeof(char) * charsSize);
@@ -92,6 +104,23 @@ int OCSArrayAlphabet_getValue(const OCSAlphabet * myself, int c) {
 	p = (const OCSArrayAlphabet *)myself;
 	for (i = 0; i < p->base._size; i++) {
 		if (p->alphabet[i] == c) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+//------------------------------------------------------------------------------
+int OCSArrayAlphabet_getValueCI(const OCSAlphabet * myself, int c) {
+	const OCSArrayAlphabet * p;
+	int i;
+
+	c = toupper(c);
+	// The list is usually very small. Given that, a sequential scan
+	// should do the job in most cases.
+	p = (const OCSArrayAlphabet *)myself;
+	for (i = 0; i < p->base._size; i++) {
+		if (toupper(p->alphabet[i]) == c) {
 			return i;
 		}
 	}
