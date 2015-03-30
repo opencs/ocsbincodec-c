@@ -112,7 +112,4 @@ void OCSHexadecimalAlphabet_dispose(OCSObject * myself);
 } // extern "C"
 #endif
 
-
-
-
 #endif /* OCSHALPH_H_ */
