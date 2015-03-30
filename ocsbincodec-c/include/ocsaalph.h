@@ -32,6 +32,7 @@
 #define OCSAALPH_H_
 
 #include <ocsalpha.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -72,7 +73,11 @@ struct OCSArrayAlphabet {
 	/**
 	 * The alphabet.
 	 */
-	char * alphabet;
+	const char * alphabet;
+	/**
+	 * My copy of the alphabet.
+	 */
+	char * myAlphabet;
 };
 
 /**
@@ -81,12 +86,27 @@ struct OCSArrayAlphabet {
  * @param[out] myself The pointer to the pointer to myself.
  * @param[in] chars The characters of the alphabet.
  * @param[in] charsSize The size of chars in characters.
- * @param[in] caseInsensitive Sets the behavior of getValue(). If zero,
+ * @param[in] caseInsensitive Sets the behavior of getValue(). If false,
  * getValue() is case sensitive, otherwise, getValue() is case insensitive.
  * @return OCSERR_SUCCESS for success or other error code in case of failure.
  */
 int OCSArrayAlphabet_New(OCSArrayAlphabet ** myself, const char * chars,
-		int charsSize, int caseInsensitive);
+		int charsSize, bool caseInsensitive);
+
+/**
+ * Creates a new instance of OCSArrayAlphabet.
+ *
+ * @param[out] myself The pointer to the pointer to myself.
+ * @param[in] chars The characters of the alphabet.
+ * @param[in] charsSize The size of chars in characters.
+ * @param[in] caseInsensitive Sets the behavior of getValue(). If false,
+ * getValue() is case sensitive, otherwise, getValue() is case insensitive.
+ * @param[in] noCopy If false, the chars array is copied to a new buffer,
+ * otherwise the chars array is used directly.
+ * @return OCSERR_SUCCESS for success or other error code in case of failure.
+ */
+int OCSArrayAlphabet_NewEx(OCSArrayAlphabet ** myself, const char * chars,
+		int charsSize, bool caseInsensitive, bool noCopy);
 
 /**
  * Initializes a new instance of OCSArrayAlphabet.
@@ -94,14 +114,17 @@ int OCSArrayAlphabet_New(OCSArrayAlphabet ** myself, const char * chars,
  * @param[out] myself The pointer to myself.
  * @param[in] chars The characters of the alphabet.
  * @param[in] charsSize The size of chars in characters.
- * @param[in] caseInsensitive Sets the behavior of getValue(). If zero,
+ * @param[in] caseInsensitive Sets the behavior of getValue(). If false,
  * getValue() is case sensitive, otherwise, getValue() is case insensitive.
+ * @param[in] noCopy If false, the chars array is copied to a new buffer,
+ * otherwise the chars array is used directly.
  * @return OCSERR_SUCCESS for success or other error code in case of failure.
  * @note This method is called only by @ref OCSArrayAlphabet_New() and
  * direct subclasses of it.
  */
 int OCSArrayAlphabet_init(OCSArrayAlphabet * myself, const char * chars,
-		int charsSize, int caseInsensitive);
+		int charsSize, bool caseInsensitive, bool noCopy);
+
 
 /**
  * Returns the value of a given character.

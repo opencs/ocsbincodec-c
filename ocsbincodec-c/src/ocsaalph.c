@@ -34,7 +34,14 @@
 
 //------------------------------------------------------------------------------
 int OCSArrayAlphabet_New(OCSArrayAlphabet ** myself, const char * chars,
-		int charsSize, int caseInsensitive) {
+		int charsSize, bool caseInsensitive) {
+	return OCSArrayAlphabet_NewEx(myself, chars, charsSize, caseInsensitive,
+			false);
+}
+
+//------------------------------------------------------------------------------
+int OCSArrayAlphabet_NewEx(OCSArrayAlphabet ** myself, const char * chars,
+		int charsSize, bool caseInsensitive, bool noCopy) {
 	int retval;
 
 	// Call the constructor of the object
@@ -42,7 +49,8 @@ int OCSArrayAlphabet_New(OCSArrayAlphabet ** myself, const char * chars,
 			OCSArrayAlphabet_dispose);
 	if (retval == OCSERR_SUCCESS) {
 		// Call my initializer
-		retval = OCSArrayAlphabet_init(*myself, chars, charsSize, caseInsensitive);
+		retval = OCSArrayAlphabet_init(*myself, chars, charsSize,
+				caseInsensitive, noCopy);
 		if (retval != OCSERR_SUCCESS) {
 			OCSObjectDelete((OCSObject *)*myself);
 			*myself = NULL;
@@ -53,7 +61,7 @@ int OCSArrayAlphabet_New(OCSArrayAlphabet ** myself, const char * chars,
 
 //------------------------------------------------------------------------------
 int OCSArrayAlphabet_init(OCSArrayAlphabet * myself, const char * chars,
-		int charsSize, int caseInsensitive) {
+		int charsSize, bool caseInsensitive, bool noCopy) {
 	int retval;
 	OCSAlphabet * asBase;
 
@@ -74,12 +82,18 @@ int OCSArrayAlphabet_init(OCSArrayAlphabet * myself, const char * chars,
 			asBase->getValue = OCSArrayAlphabet_getValue;
 		}
 
-		// Initialize the
-		myself->alphabet = malloc(sizeof(char) * charsSize);
-		if (myself->alphabet) {
-			memcpy(myself->alphabet, chars, sizeof(char) * charsSize);
+		// Initialize the map
+		if (noCopy) {
+			myself->alphabet = chars;
+			myself->myAlphabet = NULL;
 		} else {
-			retval = OCSERR_OUT_OF_MEMORY;
+			myself->myAlphabet = malloc(sizeof(char) * charsSize);
+			if (myself->myAlphabet) {
+				memcpy(myself->myAlphabet, chars, sizeof(char) * charsSize);
+				myself->alphabet = myself->myAlphabet;
+			} else {
+				retval = OCSERR_OUT_OF_MEMORY;
+			}
 		}
 	}
 	return retval;
@@ -132,8 +146,8 @@ void OCSArrayAlphabet_dispose(OCSObject * myself) {
 	OCSArrayAlphabet * p;
 
 	p = (OCSArrayAlphabet *)myself;
-	if (p->alphabet) {
-		free(p->alphabet);
+	if (p->myAlphabet) {
+		free(p->myAlphabet);
 	}
 	OCSAlphabet_dispose(myself);
 }

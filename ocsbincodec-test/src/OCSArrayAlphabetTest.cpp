@@ -58,7 +58,7 @@ TEST_F(OCSArrayAlphabetTest, Constructor) {
 	OCSAlphabet * base;
 	int retval;
 
-	retval = OCSArrayAlphabet_New(&a, CSArrayAlphabetTest_CHARS, CSArrayAlphabetTest_CHARS_SIZE, 0);
+	retval = OCSArrayAlphabet_New(&a, CSArrayAlphabetTest_CHARS, CSArrayAlphabetTest_CHARS_SIZE, false);
 	ASSERT_EQ(OCSERR_SUCCESS, retval);
 	ASSERT_TRUE(a->alphabet != CSArrayAlphabetTest_CHARS);
 	base = (OCSAlphabet*)a;
@@ -68,7 +68,34 @@ TEST_F(OCSArrayAlphabetTest, Constructor) {
 	ASSERT_EQ(CSArrayAlphabetTest_CHARS_SIZE, base->getSize(base));
 	OCSObjectDelete((OCSObject*)a);
 
-	retval = OCSArrayAlphabet_New(&a, CSArrayAlphabetTest_CHARS, CSArrayAlphabetTest_CHARS_SIZE, 1);
+	retval = OCSArrayAlphabet_New(&a, CSArrayAlphabetTest_CHARS, CSArrayAlphabetTest_CHARS_SIZE, true);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	ASSERT_TRUE(a->alphabet != CSArrayAlphabetTest_CHARS);
+	base = (OCSAlphabet*)a;
+	ASSERT_TRUE(base->getCharacter == OCSArrayAlphabet_getCharacter);
+	ASSERT_TRUE(base->getSize != NULL);
+	ASSERT_TRUE(base->getValue == OCSArrayAlphabet_getValueCI);
+	ASSERT_EQ(CSArrayAlphabetTest_CHARS_SIZE, base->getSize(base));
+	OCSObjectDelete((OCSObject*)a);
+}
+
+//------------------------------------------------------------------------------
+TEST_F(OCSArrayAlphabetTest, ConstructorEx) {
+	OCSArrayAlphabet * a;
+	OCSAlphabet * base;
+	int retval;
+
+	retval = OCSArrayAlphabet_NewEx(&a, CSArrayAlphabetTest_CHARS, CSArrayAlphabetTest_CHARS_SIZE, false, false);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	ASSERT_TRUE(a->alphabet != CSArrayAlphabetTest_CHARS);
+	base = (OCSAlphabet*)a;
+	ASSERT_TRUE(base->getCharacter == OCSArrayAlphabet_getCharacter);
+	ASSERT_TRUE(base->getSize != NULL);
+	ASSERT_TRUE(base->getValue == OCSArrayAlphabet_getValue);
+	ASSERT_EQ(CSArrayAlphabetTest_CHARS_SIZE, base->getSize(base));
+	OCSObjectDelete((OCSObject*)a);
+
+	retval = OCSArrayAlphabet_NewEx(&a, CSArrayAlphabetTest_CHARS, CSArrayAlphabetTest_CHARS_SIZE, true, false);
 	ASSERT_EQ(OCSERR_SUCCESS, retval);
 	ASSERT_TRUE(a->alphabet != CSArrayAlphabetTest_CHARS);
 	base = (OCSAlphabet*)a;
@@ -78,6 +105,25 @@ TEST_F(OCSArrayAlphabetTest, Constructor) {
 	ASSERT_EQ(CSArrayAlphabetTest_CHARS_SIZE, base->getSize(base));
 	OCSObjectDelete((OCSObject*)a);
 
+	retval = OCSArrayAlphabet_NewEx(&a, CSArrayAlphabetTest_CHARS, CSArrayAlphabetTest_CHARS_SIZE, false, true);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	ASSERT_TRUE(a->alphabet == CSArrayAlphabetTest_CHARS);
+	base = (OCSAlphabet*)a;
+	ASSERT_TRUE(base->getCharacter == OCSArrayAlphabet_getCharacter);
+	ASSERT_TRUE(base->getSize != NULL);
+	ASSERT_TRUE(base->getValue == OCSArrayAlphabet_getValue);
+	ASSERT_EQ(CSArrayAlphabetTest_CHARS_SIZE, base->getSize(base));
+	OCSObjectDelete((OCSObject*)a);
+
+	retval = OCSArrayAlphabet_NewEx(&a, CSArrayAlphabetTest_CHARS, CSArrayAlphabetTest_CHARS_SIZE, true, true);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	ASSERT_TRUE(a->alphabet == CSArrayAlphabetTest_CHARS);
+	base = (OCSAlphabet*)a;
+	ASSERT_TRUE(base->getCharacter == OCSArrayAlphabet_getCharacter);
+	ASSERT_TRUE(base->getSize != NULL);
+	ASSERT_TRUE(base->getValue == OCSArrayAlphabet_getValueCI);
+	ASSERT_EQ(CSArrayAlphabetTest_CHARS_SIZE, base->getSize(base));
+	OCSObjectDelete((OCSObject*)a);
 }
 
 //------------------------------------------------------------------------------
@@ -86,7 +132,7 @@ TEST_F(OCSArrayAlphabetTest, getCharacter) {
 	OCSAlphabet * base;
 	int retval;
 
-	retval = OCSArrayAlphabet_New(&a, CSArrayAlphabetTest_CHARS, CSArrayAlphabetTest_CHARS_SIZE, 0);
+	retval = OCSArrayAlphabet_New(&a, CSArrayAlphabetTest_CHARS, CSArrayAlphabetTest_CHARS_SIZE, false);
 	ASSERT_EQ(OCSERR_SUCCESS, retval);
 	base = (OCSAlphabet*)a;
 
@@ -102,7 +148,7 @@ TEST_F(OCSArrayAlphabetTest, getValue) {
 	OCSAlphabet * base;
 	int retval;
 
-	retval = OCSArrayAlphabet_New(&a, CSArrayAlphabetTest_CHARS, CSArrayAlphabetTest_CHARS_SIZE, 0);
+	retval = OCSArrayAlphabet_New(&a, CSArrayAlphabetTest_CHARS, CSArrayAlphabetTest_CHARS_SIZE, false);
 	ASSERT_EQ(OCSERR_SUCCESS, retval);
 	base = (OCSAlphabet*)a;
 
@@ -124,7 +170,7 @@ TEST_F(OCSArrayAlphabetTest, getValueCI) {
 	OCSAlphabet * base;
 	int retval;
 
-	retval = OCSArrayAlphabet_New(&a, CSArrayAlphabetTest_CHARS, CSArrayAlphabetTest_CHARS_SIZE, 1);
+	retval = OCSArrayAlphabet_New(&a, CSArrayAlphabetTest_CHARS, CSArrayAlphabetTest_CHARS_SIZE, true);
 	ASSERT_EQ(OCSERR_SUCCESS, retval);
 	base = (OCSAlphabet*)a;
 
