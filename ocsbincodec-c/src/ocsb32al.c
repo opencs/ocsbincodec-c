@@ -76,7 +76,7 @@ int OCSBase32Alphabet_init(OCSBase32Alphabet * myself, bool lc) {
 	if (retval == OCSERR_SUCCESS) {
 		// Register the methods
 		asBase = (OCSAlphabet *)myself;
-		asBase->getCharacter = OCSBase32Alphabet_getValue;
+		asBase->getValue = OCSBase32Alphabet_getValue;
 	}
 	return retval;
 }
