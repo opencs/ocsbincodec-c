@@ -62,12 +62,12 @@ int OCSBase64Alphabet_init(OCSBase64Alphabet * myself, bool safe) {
 
 	if (safe) {
 		map = OCSBase64Alphabet_CHARS_SAFE;
-		myself->c62 = '+';
-		myself->c63 = '/';
-	} else {
-		map = OCSBase64Alphabet_CHARS;
 		myself->c62 = '-';
 		myself->c63 = '_';
+	} else {
+		map = OCSBase64Alphabet_CHARS;
+		myself->c62 = '+';
+		myself->c63 = '/';
 	}
 	retval = OCSArrayAlphabet_init((OCSArrayAlphabet*)myself, map, 64, false,
 			true);
@@ -92,16 +92,16 @@ int OCSBase64Alphabet_getValue(const OCSAlphabet * myself, int c) {
 	} else if ((c >= 'S') && (c <= 'Z')) {
 		return c - 'S' + 18;
 	} else if ((c >= 'a') && (c <= 'i')) {
-		return c - 'a';
+		return c - 'a' + 26;
 	} else if ((c >= 'j') && (c <= 'r')) {
 		return c - 'j' + 9 + 26;
 	} else if ((c >= 's') && (c <= 'z')) {
 		return c - 's' + 18 + 26;
 	} else if ((c >= '0') && (c <= '9')) {
 		return c - '0' + 26 + 26;
-	} else if (c == ((OCSBase64Alphabet *)myself)->c62) {
+	} else if (c == (((OCSBase64Alphabet *)myself)->c62)) {
 		return 62;
-	} else if (c == ((OCSBase64Alphabet *)myself)->c63) {
+	} else if (c == (((OCSBase64Alphabet *)myself)->c63)) {
 		return 63;
 	} else {
 		return -1;
