@@ -89,7 +89,6 @@ TEST_F(OCSBase32AlphabetTest, getCharacter) {
 	retval = OCSBase32Alphabet_New(&a, false);
 	ASSERT_EQ(OCSERR_SUCCESS, retval);
 	base = (OCSAlphabet *) a;
-	base = (OCSAlphabet *) a;
 	for (int i = 0; i < 32; i++) {
 		ASSERT_EQ(OCSBase32AlphabetTest_CHARS[i], base->getCharacter(base, i));
 	}
@@ -98,7 +97,6 @@ TEST_F(OCSBase32AlphabetTest, getCharacter) {
 
 	retval = OCSBase32Alphabet_New(&a, true);
 	ASSERT_EQ(OCSERR_SUCCESS, retval);
-	base = (OCSAlphabet *) a;
 	base = (OCSAlphabet *) a;
 	for (int i = 0; i < 32; i++) {
 		ASSERT_EQ(OCSBase32AlphabetTest_CHARS_LC[i], base->getCharacter(base, i));
