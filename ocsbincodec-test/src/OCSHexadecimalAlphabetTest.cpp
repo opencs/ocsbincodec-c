@@ -124,6 +124,20 @@ TEST_F(OCSHexadecimalAlphabetTest, getValue) {
 		}
 	}
 	OCSObjectDelete((OCSObject*)a);
+
+	retval = OCSHexadecimalAlphabet_New(&a, true);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	base = (OCSAlphabet *) a;
+	for (int i = 1; i < 256; i++) {
+		const char * p = strchr(OCSHexadecimalAlphabetTest_CHARS_ALL, i);
+		if (p) {
+			int v = (p - OCSHexadecimalAlphabetTest_CHARS_ALL) % 16;
+			ASSERT_EQ(v, base->getValue(base, i));
+		} else {
+			ASSERT_EQ(-1, base->getValue(base, i));
+		}
+	}
+	OCSObjectDelete((OCSObject*)a);
 }
 
 
