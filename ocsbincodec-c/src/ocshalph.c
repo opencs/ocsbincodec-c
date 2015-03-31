@@ -74,7 +74,7 @@ int OCSHexadecimalAlphabet_init(OCSHexadecimalAlphabet * myself, bool lc) {
 	if (retval == OCSERR_SUCCESS) {
 		// Register the methods
 		asBase = (OCSAlphabet *)myself;
-		asBase->getCharacter = OCSHexadecimalAlphabet_getValue;
+		asBase->getValue = OCSHexadecimalAlphabet_getValue;
 	}
 	return retval;
 }
