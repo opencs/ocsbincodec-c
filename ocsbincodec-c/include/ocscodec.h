@@ -41,7 +41,6 @@ extern "C" {
  * @defgroup ClassOCSCodec Class OCSCodec
  *
  * <p><b>@ref ClassOCSObject &gt;
- * @ref ClassOCSAlphabet &gt;
  * @ref ClassOCSCodec</b></p>
  *
  * This class implements the base class for all codecs.
