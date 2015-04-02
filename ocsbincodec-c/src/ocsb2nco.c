@@ -198,7 +198,7 @@ int OCSBase2NCodec_encode(const OCSCodec * myself,
 		// Get a byte from source
 		bitBuffer = (bitBuffer << 8) | pSrc[srcOffs];
 		srcOffs++;
-		bitBuffer += 8;
+		bitBufferSize += 8;
 		// Add to dst
 		while (bitBufferSize >= me->size) {
 			bitBufferSize -= me->size;
@@ -209,7 +209,7 @@ int OCSBase2NCodec_encode(const OCSCodec * myself,
 	}
 
 	// Add the last char
-	while (bitBufferSize > 0) {
+	if (bitBufferSize > 0) {
 		bitBuffer = bitBuffer << (me->size - bitBufferSize);
 		dst[dstOffs] = me->alphabet->getCharacter(me->alphabet,
 				bitBuffer & me->clearMask);

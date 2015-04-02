@@ -31,6 +31,20 @@
 #include <ocsb64al.h>
 #include <ocsb2nco.h>
 
+
+// Test vectors extracted from RFC4648 and other sources
+#define OCSBase2NCodecTest_SAMPLES_SIZE 8
+static const char * OCSBase2NCodecTest_SAMPLES[8][3] = {
+	{ "", "", "" },
+	{ "f", "Zg==", "Zg" },
+	{ "fo", "Zm8=", "Zm8" },
+	{ "foo", "Zm9v", "Zm9v" },
+	{ "foob", "Zm9vYg==", "Zm9vYg" },
+	{ "fooba", "Zm9vYmE=", "Zm9vYmE" },
+	{ "foobar", "Zm9vYmFy", "Zm9vYmFy"},
+	{ "This is just a test...\n", "VGhpcyBpcyBqdXN0IGEgdGVzdC4uLgo=", "VGhpcyBpcyBqdXN0IGEgdGVzdC4uLgo"}
+};
+
 //==============================================================================
 // class OCSBase2NCodecTest
 //------------------------------------------------------------------------------
@@ -430,6 +444,87 @@ TEST_F(OCSBase2NCodecTest, getPaddingSize) {
 		OCSObjectDelete((OCSObject *) c);
 	}
 }
+
+//------------------------------------------------------------------------------
+TEST_F(OCSBase2NCodecTest, encodingNoPadding) {
+	OCSBase64Alphabet * a;
+	OCSBase2NCodec * c;
+	OCSCodec * base;
+	const char ** sample;
+	char dst[256];
+	int srcSize;
+	int tmpSize;
+	int dstSize;
+	int dstSize2;
+	int retval;
+	int i;
+
+	// No padding, no ignore list
+	retval = OCSBase64Alphabet_New(&a, false);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, '=', 0, NULL);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	base = (OCSCodec *)c;
+	for (i = 0 ; i < OCSBase2NCodecTest_SAMPLES_SIZE; i++) {
+		sample = OCSBase2NCodecTest_SAMPLES[i];
+		srcSize = strlen(sample[0]);
+		dstSize = base->getEncodedSize(base, srcSize);
+		for (tmpSize = 0; tmpSize < dstSize; tmpSize++) {
+			dstSize2 = tmpSize;
+			retval = base->encode(base, sample[0], srcSize, dst, &dstSize2);
+			ASSERT_EQ(OCSERR_BUFFER_TOO_SMALL, retval);
+		}
+		memset(dst, '*', sizeof(dst));
+		dstSize2 = dstSize;
+		retval = base->encode(base, sample[0], srcSize, dst, &dstSize2);
+		ASSERT_EQ(OCSERR_SUCCESS, retval);
+		ASSERT_EQ('*', dst[dstSize2]);
+		dst[dstSize2] = 0;
+		ASSERT_STREQ(sample[2], dst);
+	}
+	OCSObjectDelete((OCSObject *) c);
+}
+
+//------------------------------------------------------------------------------
+TEST_F(OCSBase2NCodecTest, encodingPadding) {
+	OCSBase64Alphabet * a;
+	OCSBase2NCodec * c;
+	OCSCodec * base;
+	const char ** sample;
+	char dst[256];
+	int srcSize;
+	int tmpSize;
+	int dstSize;
+	int dstSize2;
+	int retval;
+	int i;
+
+	// No padding, no ignore list
+	retval = OCSBase64Alphabet_New(&a, false);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, '=', 4, NULL);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	base = (OCSCodec *)c;
+	for (i = 0 ; i < OCSBase2NCodecTest_SAMPLES_SIZE; i++) {
+		sample = OCSBase2NCodecTest_SAMPLES[i];
+		srcSize = strlen(sample[0]);
+		dstSize = base->getEncodedSize(base, srcSize);
+		for (tmpSize = 0; tmpSize < dstSize; tmpSize++) {
+			dstSize2 = tmpSize;
+			retval = base->encode(base, sample[0], srcSize, dst, &dstSize2);
+			ASSERT_EQ(OCSERR_BUFFER_TOO_SMALL, retval);
+		}
+		memset(dst, '*', sizeof(dst));
+		dstSize2 = dstSize;
+		retval = base->encode(base, sample[0], srcSize, dst, &dstSize2);
+		ASSERT_EQ(OCSERR_SUCCESS, retval);
+		ASSERT_EQ('*', dst[dstSize2]);
+		dst[dstSize2] = 0;
+		ASSERT_STREQ(sample[1], dst);
+	}
+	OCSObjectDelete((OCSObject *) c);
+}
+
 
 //------------------------------------------------------------------------------
 
