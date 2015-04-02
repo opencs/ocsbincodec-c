@@ -117,6 +117,11 @@ struct OCSBase2NCodec {
 };
 
 /**
+ * List of blank characters.
+ */
+#define OCSBase2NCodec_SPACES " \n\r\f\v\t"
+
+/**
  * Creates a new instance of OCSBase2NCodec.
  *
  * @param[out] myself The pointer to the pointer to myself.
