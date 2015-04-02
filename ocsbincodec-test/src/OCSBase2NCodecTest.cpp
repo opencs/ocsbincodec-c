@@ -56,7 +56,6 @@ TEST_F(OCSBase2NCodecTest, ConstructorNoPaddingNoIgnore) {
 	OCSCodec * base;
 	int retval;
 
-	// No padding, no ignore list
 	retval = OCSBase64Alphabet_New(&a, false);
 	ASSERT_EQ(OCSERR_SUCCESS, retval);
 	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, 0, 0, NULL);
@@ -86,7 +85,6 @@ TEST_F(OCSBase2NCodecTest, ConstructorNoPaddingIgnore) {
 	int retval;
 	const char * spaces = OCSBase2NCodec_SPACES;
 
-	// No padding, no ignore list
 	retval = OCSBase64Alphabet_New(&a, false);
 	ASSERT_EQ(OCSERR_SUCCESS, retval);
 	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, 0, 0, spaces);
@@ -117,7 +115,6 @@ TEST_F(OCSBase2NCodecTest, ConstructorPaddingNoIgnore) {
 	OCSCodec * base;
 	int retval;
 
-	// No padding, no ignore list
 	retval = OCSBase64Alphabet_New(&a, false);
 	ASSERT_EQ(OCSERR_SUCCESS, retval);
 	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, '=', 4, NULL);
@@ -147,7 +144,6 @@ TEST_F(OCSBase2NCodecTest, ConstructorPaddingIgnore) {
 	int retval;
 	const char * spaces = OCSBase2NCodec_SPACES;
 
-	// No padding, no ignore list
 	retval = OCSBase64Alphabet_New(&a, false);
 	ASSERT_EQ(OCSERR_SUCCESS, retval);
 	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, '=', 4, spaces);
@@ -171,6 +167,269 @@ TEST_F(OCSBase2NCodecTest, ConstructorPaddingIgnore) {
 	OCSObjectDelete((OCSObject *) c);
 }
 
+//------------------------------------------------------------------------------
+TEST_F(OCSBase2NCodecTest, getEncodedSize) {
+	OCSBase64Alphabet * a;
+	OCSBase2NCodec * c;
+	OCSCodec * base;
+	int retval;
+	const char * spaces = OCSBase2NCodec_SPACES;
+	int decSize;
+	int expectedSize;
+
+	// No padding, no ignore list
+	retval = OCSBase64Alphabet_New(&a, false);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, 0, 0, NULL);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	base = (OCSCodec *)c;
+	for (decSize = 0; decSize < 1024; decSize++) {
+		expectedSize = ((decSize * 8) + 5) / 6;
+		ASSERT_EQ(expectedSize, base->getEncodedSize(base, decSize));
+	}
+	OCSObjectDelete((OCSObject *) c);
+
+	// Padding, no ignore list
+	retval = OCSBase64Alphabet_New(&a, false);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, '=', 4, NULL);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	base = (OCSCodec *)c;
+	for (decSize = 0; decSize < 1024; decSize++) {
+		expectedSize = ((decSize * 8) + 5) / 6;
+		expectedSize = expectedSize + ((4 - expectedSize % 4) % 4);
+		ASSERT_EQ(expectedSize, base->getEncodedSize(base, decSize));
+	}
+	OCSObjectDelete((OCSObject *) c);
+
+	// No padding, ignore list
+	retval = OCSBase64Alphabet_New(&a, false);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, 0, 0, spaces);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	base = (OCSCodec *)c;
+	for (decSize = 0; decSize < 1024; decSize++) {
+		expectedSize = ((decSize * 8) + 5) / 6;
+		ASSERT_EQ(expectedSize, base->getEncodedSize(base, decSize));
+	}
+	OCSObjectDelete((OCSObject *) c);
+
+	// Padding, ignore list
+	retval = OCSBase64Alphabet_New(&a, false);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, '=', 4, spaces);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	base = (OCSCodec *)c;
+	for (decSize = 0; decSize < 1024; decSize++) {
+		expectedSize = ((decSize * 8) + 5) / 6;
+		expectedSize = expectedSize + ((4 - expectedSize % 4) % 4);
+		ASSERT_EQ(expectedSize, base->getEncodedSize(base, decSize));
+	}
+	OCSObjectDelete((OCSObject *) c);
+}
+
+//------------------------------------------------------------------------------
+TEST_F(OCSBase2NCodecTest, getDecodedSize) {
+	OCSBase64Alphabet * a;
+	OCSBase2NCodec * c;
+	OCSCodec * base;
+	int retval;
+	const char * spaces = OCSBase2NCodec_SPACES;
+	int encSize;
+	int expectedSize;
+
+	// No padding, no ignore list
+	retval = OCSBase64Alphabet_New(&a, false);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, 0, 0, NULL);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	base = (OCSCodec *)c;
+	for (encSize = 0; encSize < 1024; encSize++) {
+		expectedSize = (encSize * 6) / 8;
+		ASSERT_EQ(expectedSize, base->getDecodedSize(base, encSize));
+	}
+	OCSObjectDelete((OCSObject *) c);
+
+	// Padding, no ignore list
+	retval = OCSBase64Alphabet_New(&a, false);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, '=', 4, NULL);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	base = (OCSCodec *)c;
+	for (encSize = 0; encSize < 1024; encSize++) {
+		expectedSize = (encSize * 6) / 8;
+		ASSERT_EQ(expectedSize, base->getDecodedSize(base, encSize));
+	}
+	OCSObjectDelete((OCSObject *) c);
+
+	// No padding, ignore list
+	retval = OCSBase64Alphabet_New(&a, false);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, 0, 0, spaces);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	base = (OCSCodec *)c;
+	for (encSize = 0; encSize < 1024; encSize++) {
+		expectedSize = (encSize * 6) / 8;
+		ASSERT_EQ(expectedSize, base->getDecodedSize(base, encSize));
+	}
+	OCSObjectDelete((OCSObject *) c);
+
+	// Padding, ignore list
+	retval = OCSBase64Alphabet_New(&a, false);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, '=', 4, spaces);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	base = (OCSCodec *)c;
+	for (encSize = 0; encSize < 1024; encSize++) {
+		expectedSize = (encSize * 6) / 8;
+		ASSERT_EQ(expectedSize, base->getDecodedSize(base, encSize));
+	}
+	OCSObjectDelete((OCSObject *) c);
+}
+
+//------------------------------------------------------------------------------
+TEST_F(OCSBase2NCodecTest, padding) {
+	OCSBase64Alphabet * a;
+	OCSBase2NCodec * c;
+	const char * spaces = OCSBase2NCodec_SPACES;
+	int retval;
+	int i;
+
+	// No padding, no ignore list
+	retval = OCSBase64Alphabet_New(&a, false);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, '=', 0, NULL);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	ASSERT_FALSE(c->usePadding(c));
+	for (i = 0 ; i < 256; i++) {
+		ASSERT_FALSE(c->isPadding(c, i));
+	}
+	OCSObjectDelete((OCSObject *) c);
+
+	// No padding, ignore list
+	retval = OCSBase64Alphabet_New(&a, false);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, '=', 0, spaces);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	ASSERT_FALSE(c->usePadding(c));
+	for (i = 0 ; i < 256; i++) {
+		ASSERT_FALSE(c->isPadding(c, i));
+	}
+	OCSObjectDelete((OCSObject *) c);
+
+	// No padding, no ignore list
+	retval = OCSBase64Alphabet_New(&a, false);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, '=', 1, NULL);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	ASSERT_FALSE(c->usePadding(c));
+	for (i = 0 ; i < 256; i++) {
+		ASSERT_FALSE(c->isPadding(c, i));
+	}
+	OCSObjectDelete((OCSObject *) c);
+
+	// No padding, ignore list
+	retval = OCSBase64Alphabet_New(&a, false);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, '=', 1, spaces);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	ASSERT_FALSE(c->usePadding(c));
+	for (i = 0 ; i < 256; i++) {
+		ASSERT_FALSE(c->isPadding(c, i));
+	}
+	OCSObjectDelete((OCSObject *) c);
+
+	// No padding, no ignore list
+	retval = OCSBase64Alphabet_New(&a, false);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, '=', 2, NULL);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	ASSERT_TRUE(c->usePadding(c));
+	for (i = 0 ; i < 256; i++) {
+		if (i == '=') {
+			ASSERT_TRUE(c->isPadding(c, i));
+		} else {
+			ASSERT_FALSE(c->isPadding(c, i));
+		}
+	}
+	OCSObjectDelete((OCSObject *) c);
+
+	// No padding, ignore list
+	retval = OCSBase64Alphabet_New(&a, false);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, '=', 2, spaces);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	ASSERT_TRUE(c->usePadding(c));
+	for (i = 0 ; i < 256; i++) {
+		if (i == '=') {
+			ASSERT_TRUE(c->isPadding(c, i));
+		} else {
+			ASSERT_FALSE(c->isPadding(c, i));
+		}
+	}
+	OCSObjectDelete((OCSObject *) c);
+
+	// No padding, no ignore list
+	retval = OCSBase64Alphabet_New(&a, false);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, '=', 4, NULL);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	ASSERT_TRUE(c->usePadding(c));
+	for (i = 0 ; i < 256; i++) {
+		if (i == '=') {
+			ASSERT_TRUE(c->isPadding(c, i));
+		} else {
+			ASSERT_FALSE(c->isPadding(c, i));
+		}
+	}
+	OCSObjectDelete((OCSObject *) c);
+
+	// No padding, ignore list
+	retval = OCSBase64Alphabet_New(&a, false);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, '=', 4, spaces);
+	ASSERT_EQ(OCSERR_SUCCESS, retval);
+	ASSERT_TRUE(c->usePadding(c));
+	for (i = 0 ; i < 256; i++) {
+		if (i == '=') {
+			ASSERT_TRUE(c->isPadding(c, i));
+		} else {
+			ASSERT_FALSE(c->isPadding(c, i));
+		}
+	}
+	OCSObjectDelete((OCSObject *) c);
+}
+
+
+//------------------------------------------------------------------------------
+extern "C"
+int OCSBase2NCodec_getPaddingSize(const OCSBase2NCodec * myself, int totalSize);
+TEST_F(OCSBase2NCodecTest, getPaddingSize) {
+	OCSBase64Alphabet * a;
+	OCSBase2NCodec * c;
+	int retval;
+	int paddingBlockSize;
+	int expected;
+	int size;
+
+	for (paddingBlockSize = 0; paddingBlockSize <= 4; paddingBlockSize++) {
+		retval = OCSBase64Alphabet_New(&a, false);
+		ASSERT_EQ(OCSERR_SUCCESS, retval);
+		retval = OCSBase2NCodec_New(&c, (OCSAlphabet*)a, '=', paddingBlockSize,
+				NULL);
+		ASSERT_EQ(OCSERR_SUCCESS, retval);
+		for (size = 0; size < 1024; size++) {
+			if(c->usePadding(c)) {
+				expected = (paddingBlockSize - (size % paddingBlockSize)) %
+						paddingBlockSize;
+			} else {
+				expected = 0;
+			}
+			ASSERT_EQ(expected, OCSBase2NCodec_getPaddingSize(c, size));
+		}
+		OCSObjectDelete((OCSObject *) c);
+	}
+}
 
 //------------------------------------------------------------------------------
 
