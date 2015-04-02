@@ -59,5 +59,18 @@
  */
 #define OCSERR_INVALID_ARGUMENT -3
 
+/**
+ * Error code for corrupted encoded data.
+ *
+ * @ingroup OCSERR
+ */
+#define OCSERR_CORRUPTED_ENCODED_DATA -4
+
+/**
+ * Error code for bad padding.
+ *
+ * @ingroup OCSERR
+ */
+#define OCSERR_BAD_PADDING -5
 
 #endif /* OCSERR_H_ */

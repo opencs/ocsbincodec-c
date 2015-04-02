@@ -77,6 +77,7 @@ int OCSBase2NCodec_setAlphabet(OCSBase2NCodec * myself, OCSAlphabet * alphabet) 
 	if (alphabet == NULL) {
 		retval = OCSERR_INVALID_ARGUMENT;
 	} else {
+		// Discover the size of the alphabet in bits
 		size = 1;
 		do {
 			alphaSize = (1 << size);
@@ -139,13 +140,11 @@ int OCSBase2NCodec_init(OCSBase2NCodec * myself, OCSAlphabet * alphabet,
 }
 
 //------------------------------------------------------------------------------
-int OCSBase2NCodec_getPaddingSize(const OCSCodec * myself, int totalSize) {
-	OCSBase2NCodec * me;
+int OCSBase2NCodec_getPaddingSize(const OCSBase2NCodec * myself, int totalSize) {
 
-	me = (OCSBase2NCodec *)myself;
-	if (me->usePadding(me)) {
-		return (me->paddingBlockSize - (totalSize % me->paddingBlockSize)) %
-				me->paddingBlockSize;
+	if (myself->usePadding(myself)) {
+		return (myself->paddingBlockSize - (totalSize % myself->paddingBlockSize)) %
+				myself->paddingBlockSize;
  	} else {
  		return 0;
  	}
@@ -153,7 +152,12 @@ int OCSBase2NCodec_getPaddingSize(const OCSCodec * myself, int totalSize) {
 
 //------------------------------------------------------------------------------
 int OCSBase2NCodec_getEncodedSize(const OCSCodec * myself, int decSize) {
+	OCSBase2NCodec * me;
+	int totalSize;
 
+	me = (OCSBase2NCodec *)myself;
+	totalSize = ((decSize * 8) + me->size - 1) / me->size;
+	return totalSize + OCSBase2NCodec_getPaddingSize(me, totalSize);
 }
 
 //------------------------------------------------------------------------------
@@ -168,14 +172,149 @@ int OCSBase2NCodec_getDecodedSize(const OCSCodec * myself, int encSize) {
 int OCSBase2NCodec_encode(const OCSCodec * myself,
 		const void * src, int srcSize,
 		char * dst, int * dstSize) {
+	int bitBuffer;
+	int bitBufferSize;
+	int srcOffs;
+	int dstOffs;
+	int paddingSize;
+	const uint8_t * pSrc;
+	OCSBase2NCodec * me;
 
+	me = (OCSBase2NCodec *)myself;
+
+	// Ensure that the output buffer is large enough to hold the output.
+	if ((*dstSize) < myself->getEncodedSize(myself, srcSize)) {
+		return OCSERR_BUFFER_TOO_SMALL;
+	}
+
+	// Due to potential problems with pointer arithmetic on mainframes, we will
+	// use offsets instead of pointers.
+	bitBufferSize = 0;
+	bitBuffer = 0;
+	srcOffs = 0;
+	dstOffs = 0;
+	pSrc = (const uint8_t *)src;
+	while (srcOffs < srcSize) {
+		// Get a byte from source
+		bitBuffer = (bitBuffer << 8) | pSrc[srcOffs];
+		srcOffs++;
+		bitBuffer += 8;
+		// Add to dst
+		while (bitBufferSize >= me->size) {
+			bitBufferSize -= me->size;
+			dst[dstOffs] = me->alphabet->getCharacter(me->alphabet,
+					(bitBuffer >> bitBufferSize) & me->clearMask);
+			dstOffs++;
+		}
+	}
+
+	// Add the last char
+	while (bitBufferSize > 0) {
+		bitBuffer = bitBuffer << (me->size - bitBufferSize);
+		dst[dstOffs] = me->alphabet->getCharacter(me->alphabet,
+				bitBuffer & me->clearMask);
+		dstOffs++;
+	}
+
+	// Add the padding?
+	paddingSize = OCSBase2NCodec_getPaddingSize(me, dstOffs);
+	while (paddingSize) {
+		dst[dstOffs] = (char)me->paddingChar;
+		dstOffs++;
+		paddingSize--;
+	}
+
+	*dstSize = dstOffs;
+	return OCSERR_SUCCESS;
 }
 
 //------------------------------------------------------------------------------
 int OCSBase2NCodec_decode(const OCSCodec * myself,
 		const char * src, int srcSize,
 		void * dst, int * dstSize) {
+	int bitBuffer;
+	int bitBufferSize;
+	int dstOffs;
+	int srcOffs;
+	int c;
+	int v;
+	bool stop;
+	int paddingSize;
+	int srcTrueSize;
+	uint8_t * pDst;
+	OCSBase2NCodec * me;
 
+	me = (OCSBase2NCodec *)myself;
+
+	// Ensure that the dst is large enough to hold the output
+	if ((*dstSize) < myself->getDecodedSize(myself, srcSize)) {
+		return OCSERR_BUFFER_TOO_SMALL;
+	}
+
+	// Due to potential problems with pointer arithmetic on mainframes, we will
+	// use offsets instead of pointers.
+	bitBuffer = 0;
+	bitBufferSize = 0;
+	paddingSize = 0;
+	srcOffs = 0;
+	dstOffs = 0;
+	pDst = (uint8_t *) dst;
+	srcTrueSize = 0;
+	stop = (srcOffs >= dstOffs);
+	while (!stop) {
+		// Get the character from the input
+		c = src[srcOffs];
+		srcOffs++;
+		stop = (srcOffs >= dstOffs);
+
+		// Test ignored first!
+		if (!me->isIgnored(me, c)) {
+			srcTrueSize++;
+			if (me->isPadding(me, c)) {
+				stop = true;
+				paddingSize = 1;
+			} else {
+				v = me->alphabet->getValue(me->alphabet, c);
+				if (v < 0) {
+					return OCSERR_CORRUPTED_ENCODED_DATA;
+				} else {
+					bitBuffer = (bitBuffer << me->size) | v;
+					bitBufferSize += me->size;
+
+					while (bitBuffer >= 8) {
+						bitBufferSize -= 8;
+						pDst[dstOffs] = (bitBuffer >> bitBufferSize) & 0xFF;
+						dstOffs++;
+					}
+				}
+			}
+		}
+	}
+
+	// Verify the padding
+	if (me->usePadding(me)) {
+		if (paddingSize > 0) {
+			// Removes the rest of the padding
+			stop = (srcOffs >= dstOffs);
+			while (!stop) {
+				c = src[srcOffs];
+				src++;
+				if (!me->isIgnored(me, c)) {
+					srcTrueSize++;
+					if (!me->isPadding(me, c)) {
+						return OCSERR_BAD_PADDING;
+					}
+				}
+			}
+		}
+		// Check if srcTrueSize is indeed multiple of padding block size.
+		if ((srcTrueSize % me->paddingBlockSize) != 0) {
+			return OCSERR_BAD_PADDING;
+		}
+	}
+
+	*dstSize = dstOffs;
+	return OCSERR_SUCCESS;
 }
 
 //------------------------------------------------------------------------------
