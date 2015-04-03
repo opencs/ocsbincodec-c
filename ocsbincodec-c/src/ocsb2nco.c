@@ -260,12 +260,12 @@ int OCSBase2NCodec_decode(const OCSCodec * myself,
 	dstOffs = 0;
 	pDst = (uint8_t *) dst;
 	srcTrueSize = 0;
-	stop = (srcOffs >= dstOffs);
+	stop = (srcOffs >= srcSize);
 	while (!stop) {
 		// Get the character from the input
 		c = src[srcOffs];
 		srcOffs++;
-		stop = (srcOffs >= dstOffs);
+		stop = (srcOffs >= srcSize);
 
 		// Test ignored first!
 		if (!me->isIgnored(me, c)) {
@@ -281,7 +281,7 @@ int OCSBase2NCodec_decode(const OCSCodec * myself,
 					bitBuffer = (bitBuffer << me->size) | v;
 					bitBufferSize += me->size;
 
-					while (bitBuffer >= 8) {
+					while (bitBufferSize >= 8) {
 						bitBufferSize -= 8;
 						pDst[dstOffs] = (bitBuffer >> bitBufferSize) & 0xFF;
 						dstOffs++;
@@ -295,10 +295,11 @@ int OCSBase2NCodec_decode(const OCSCodec * myself,
 	if (me->usePadding(me)) {
 		if (paddingSize > 0) {
 			// Removes the rest of the padding
-			stop = (srcOffs >= dstOffs);
+			stop = (srcOffs >= srcSize);
 			while (!stop) {
 				c = src[srcOffs];
-				src++;
+				srcOffs++;
+				stop = (srcOffs >= srcSize);
 				if (!me->isIgnored(me, c)) {
 					srcTrueSize++;
 					if (!me->isPadding(me, c)) {
