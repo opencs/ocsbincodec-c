@@ -38,6 +38,8 @@ public:
 	virtual ~OCSBase2NCodecTest();
 	virtual void SetUp();
 	virtual void TearDown();
+	bool merge(const char * a, const char * b, int cSize, char * c);
+	void randomFill(void * a, int aSize);
 };
 #endif //__OCSBASE2NCODECTEST_H__
 
