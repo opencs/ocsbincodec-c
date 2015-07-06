@@ -48,3 +48,20 @@ This software is released under the *Modified BSD License*.
 
 Yes. Just follow the license restrictions.
 
+### This library uses external dependencies?
+
+The library itself is a pure C99 program. The test program (ocsbincodec-test) is implemented in C++ and uses the library Google Test 1.7.0 (https://code.google.com/p/googletest/).
+
+### What is the IDE used to develop this library?
+
+The IDE used was Eclipse Luna with CDT installed.
+
+### What is the primary OS used to develop this library?
+
+It was developed on Linux first and ported to Windows (Mingw32) later.
+
+### Why is the name of the files so strange?
+
+The file names were choosen to be at most 8 characters long. This ensures the compatibility with z/OS dataset member names.
+
+
