@@ -64,4 +64,9 @@ It was developed on Linux first and ported to Windows (Mingw32) later.
 
 The file names were choosen to be at most 8 characters long. This ensures the compatibility with z/OS dataset member names.
 
+### How do I integrate this code into my iOS project?
+
+Just copy the files under ocsbincodec-c/include and ocsbincodec-c/src into your project's source, add them to your XCode project.
+
+C API's can be used directly by Objective-C code and, with minor adjusts, from Swift too (https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/BuildingCocoaApps/InteractingWithCAPIs.html).
 
